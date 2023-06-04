@@ -25,7 +25,8 @@ lets say the I/O ports are in ``li1 layer`` and check whethere they are at inter
  
  Now, check whether the width and height of std cell met by measuring the tracks the cells has occupied.
  
- ![4-3 grid](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/886c310e-0701-4bf1-ba06-0d6cc4c0a3b6)
+ ![frustated](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/319aa4c7-6e1e-4273-b9cd-ba10adfc4c73)
+
 
 ### create Port Definition: 
 
@@ -96,8 +97,8 @@ This generates ``sky130_vsdinv.lef`` file.
 
 ### Integrating custom cell in OpenLANE
 
-In order to include our custom standard cell to ur design and run the first step synthesis, copy the sky130_vsdinv.lef file to the designs/picorv32a/src directory.
-Since abc maps the standard cell to a library, there must be a library that defines the CMOS inverter. The sky130_fd_sc_hd_typical.lib as well as fast and slow libs files from vsdstdcelldesign/libs directory needs to be copied to the designs/picorv32a/src directory. If you are interested to check our cell in lib and lef, go to lib and lef folders
+In order to include our custom standard cell to ur design and run the first step synthesis, copy the``` sky130_vsdinv.lef``` file to the ``designs/picorv32a/src directory.``
+Since abc maps the standard cell to a library, there must be a library that defines the CMOS inverter. The s```ky130_fd_sc_hd_typical.lib``` as well as fast and slow libs files from ```vsdstdcelldesign/libs``` directory needs to be copied to the ```designs/picorv32a/src``` directory. If you are interested to check our cell in lib and lef, go to lib and lef folders
 
 ![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/77f8b542-d996-4060-956f-c02283e2f5b0)
 
@@ -105,7 +106,7 @@ Since abc maps the standard cell to a library, there must be a library that defi
 ![4-10 lef and lib file to picrov32a](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/685c25b1-c3f1-43f2-b7e0-1985cd341531)
 
 
-Next, modifiy the ``config.tcl`` 
+Next, modifiy the ``config.tcl`` by adding few extra definitions like abc synthesis mapping to typical.lib, other three are used for sta analysis and to include extra lefs(our design lef) to flow
 
 ```
 set ::env(LIB_SYNTH) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130/sky130_fd_sc_hd__typical.lib"
@@ -117,6 +118,8 @@ set ::env(EXTRA_LEFS) [glob $::env(OPENLANE_ROOT)/designs/$::env(DESIGN_NAME)/sr
 
 ![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/d6414049-bbc3-4c80-b516-7b616afa973d)
 
+Before this, lets change the env variable strategy for synth in `` configuration/synthesis.tcl ``  from `` AREA 0 to DELAY ``
+
 
 In order to integrate the standard cell in the OpenLANE flow, invoke openLANE as usual and carry out following steps:
 ``` 
@@ -125,12 +128,8 @@ set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
 add_lefs -src $lefs
 run_synthesis
 ```
-After synthesis , my total neagtive and worst negative lack values are 
+After synthesis , my slack is Zero
 
-``
-tns : -711.59
-wns: -23.89
-``
 ### Delay
 
 Basically, Delay is a parameter that has huge impact on our cells in the design. Delay decides each and every other factor in timing. 
@@ -145,7 +144,7 @@ Just for better values for slack, I checked few synthesis environment variables 
 
 ![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/0296f08a-fdab-4c22-9ec4-d4b04ee78d2c)
 
-run synthesis again for better slack
+run synthesis if you have violations for better slack
 
 Next floorplan is run, followed by placement:
 ```
@@ -160,7 +159,8 @@ magic -T /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/pdks/sky
 
 Since the custom standard cell has been plugged into the design,in the openlane flow, it would be visible in the layout.
 
-# paste the cell image once u do placement and expand it by S on ouyr cell and exapnd typing in tkco
+![cell in our design](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/f36a0c82-cd99-4850-b1ec-3a4e9114b747)
+
 
 
 ### Post-synthesis timing analysis

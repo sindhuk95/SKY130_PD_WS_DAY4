@@ -11,37 +11,37 @@ Before moving any further lets know about tracks.
 ### Track 
  A line or path on which metal layers are drawn for routing. Track is used to define the height of the standard cell. 
 
-As we are trying to implement our own stdcell, there are few guidelines to be followed
- -I/O ports must lie on the intersection on Horizontal and vertical tracks
+As we are trying to implement our own stdcell, there are few guidelines to be followed 
+ - I/O ports must lie on the intersection on Horizontal and vertical tracks
  - Width and Height of standard cell are odd mutliples of Horizontal track pitch and Vertical track pitch
 
-This information is defined in ``tracks.info``. The syntax is `` metallayer direction offset spacing``
+This information is defined in ``tracks.info``. The syntax is `` metal layer direction offset spacing``
+
 ``li1 X 0.23 0.46
-  li1 Y 0.17 0.34`` 
+
+  li1 Y 0.17 0.34
+`` 
   
-  ![4-1](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/0b1a5578-e3a4-41b4-b8c5-6ce8c4414228)
+![4-1](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/0b1a5578-e3a4-41b4-b8c5-6ce8c4414228)
 
 lets say the I/O ports are in ``li1 layer`` and check whethere they are at intersection or not by using ``grid 0.46um 0.34um 0.23um 0.17um`` on tkcon windowand and to activate the grid, press G on the magic console.
  
- Now, check whether the width and height of std cell met by measuring the tracks the cells has occupied.
+Now, check whether the width and height of std cell met by measuring the tracks the cells has occupied.
  
- ![frustated](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/319aa4c7-6e1e-4273-b9cd-ba10adfc4c73)
+![frustated](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/319aa4c7-6e1e-4273-b9cd-ba10adfc4c73)
 
 
-### create Port Definition: 
+### Create Port Definition: 
 
 However, certain properties and definitions need to be set to the pins of the cell. For LEF files, a cell that contains ports is written as a macro cell, and the ports are the declared as PINs of the macro. Our objective is to extract LEF from a mag file. 
 
 The way to define a port is through Magic console and following are the steps:
 - In Magic Layout window, first source the .mag file for the design (here inverter). Then Edit >> Text which opens up a dialogue box.
-
-![4-6 port declaration](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/df06c1ee-65a7-455f-9604-607b556d1ca4)
-
 - When you double press S at the I/O lables, the text automatically takes the string name and size. Ensure the Port enable checkbox is checked and default checkbox is unchecked as shown in the figure:
--
-![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/0b28cc75-8648-4211-a865-60128a0a47bf)
 
-- In the above two figures, The number in the textarea near enable checkbox defines the order in which the ports will be written in LEF file (0 being the first).
+![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/8aee236b-632c-41ae-8465-db34b3783501)
+
+- In the above figure, The number in the textarea near enable checkbox defines the order in which the ports will be written in LEF file (0 being the first).
 
 -  For power and ground layers, the definition could be same or different than the signal layer. Here, ground and power connectivity are taken from metal1 (Check by using
 what command on tkcon once you make box on VPWR and VGND on magic window)
@@ -130,6 +130,8 @@ run_synthesis
 ```
 After synthesis , my slack is Zero
 
+
+
 ### Delay
 
 Basically, Delay is a parameter that has huge impact on our cells in the design. Delay decides each and every other factor in timing. 
@@ -165,19 +167,20 @@ Since the custom standard cell has been plugged into the design,in the openlane 
 
 ### Post-synthesis timing analysis
 
-Timing analysis is carried out outside the openLANE flow using OpenSTA tool. For this, a new file ```pre_sta.conf``` is created. This file would be reqiured to carry out the STA analysis. Invoke OpenSTA outside the openLANE flow as follows:
+Timing analysis is carried out outside the openLANE flow using OpenSTA tool. For this, ```pre_sta.conf``` is required to carry out the STA analysis. Invoke OpenSTA outside the openLANE flow as follows:
 ```
 sta pre_sta.conf
 ```
 
-Since clock is propagated only once we do CTS, In placement stage clock is considered to be ideal. So only setup slack is taken into consideration before CTS.
+Since clock is propagated only once we do CTS, In placement stage, clock is considered to be ideal. So only setup slack is taken into consideration before CTS.
 
-`` Setup time: minimum time required for the data to be stable before the active edge of the clock to get properly captured.
-setup slack : data required time - data arrival time``
+``   Setup time: minimum time required for the data to be stable before the active edge of the clock to get properly captured.
+
+setup slack : data required time - data arrival time  ``
 
 clock is generated from PLL which has inbuilt circuit which cells and some logic. There might variations in the clock generation depending upon the ckt. These variations are collectivity known as clock uncertainity. In that jitter is one of the parameter. 
 
-``Clock Jitter : deviation of clock edge from its original location.``
+``  Clock Jitter : deviation of clock edge from its original position. ``
 
 From the timing report, we can improve slack by upsizing the cells i.e., by replacing the cells with high drive strength and we can see significant changes in the slack.
 

@@ -152,8 +152,32 @@ run synthesis if you have violations for better slack
 Next floorplan is run, followed by placement:
 ```
 run_floorplan
-run_placement
+
 ```
+SInce we are getting an error shown in the below, 
+
+![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/9cd41112-43d3-46e7-98f3-5008a7afe8ab)
+
+we gave commands for each stage manually step by step after synthesis.  
+
+`` 
+   init_floorplan
+   place_io
+   global_placement_or
+   tap_decap_or
+   ``
+   
+During floorplan, `` tap cells - 7892, Endcap cells - 550 `` got placed. Design has `` 275 original rows ``.
+
+Now Instead of run_placement, we get 
+``
+   detailed_placement
+``
+
+After placement, we check for legality. I even check how many cells got placed.
+
+![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/91b062d3-946c-4893-af99-ff826db25b45)
+
 To check the layout invoke magic from the ```results/placement``` directory:
 
 ```
@@ -164,20 +188,19 @@ Since the custom standard cell has been plugged into the design,in the openlane 
 
 ![cell in our design](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/f36a0c82-cd99-4850-b1ec-3a4e9114b747)
 
-
-
 ### Post-synthesis timing analysis Using OpenSTA
+
 Timing analysis is carried out outside the openLANE flow using OpenSTA tool. For this, ```pre_sta.conf``` is required to carry out the STA analysis. Invoke OpenSTA outside the openLANE flow as follows:
 ```
 sta pre_sta.conf
 ```
-Since I have no Violations I skipped this, but have hands on experience on Open STA.
+Since I have no Violations I skipped this, but have hands on experience on OpenSTA.
 
 Since clock is propagated only once we do CTS, In placement stage, clock is considered to be ideal. So only setup slack is taken into consideration before CTS.
 
-``   Setup time: minimum time required for the data to be stable before the active edge of the clock to get properly captured.
+`` Setup time: minimum time required for the data to be stable before the active edge of the clock to get properly captured.``
 
-setup slack : data required time - data arrival time  ``
+`` setup slack : data required time - data arrival time  ``
 
 clock is generated from PLL which has inbuilt circuit which cells and some logic. There might variations in the clock generation depending upon the ckt. These variations are collectivity known as clock uncertainity. In that jitter is one of the parameter. 
 
@@ -193,6 +216,10 @@ From the timing report, we can improve slack by upsizing the cells i.e., by repl
 run_cts
 ```
 
+After CTS run, my slack values are
+
+``setup : 4.33 , Hold : 0.25``
+
 Since, clock is propagated, from this stage, we do timing analysis with real clocks. From now post cts analysis is performed by operoad within the openlane flow
 
 ```
@@ -205,7 +232,11 @@ link_design picorv32a
 read_sdc /openLANE_flow/designs/picorv32a/src/my_base.sdc
 set_propagated_clock (all_clocks)
 report_checks -path_delay min_max -format full_clock_expanded -digits 4
-```
+``` 
+
+After performing Timing analysis, my slack values are
+
+`` Setup : 4.0565 , Hold : -0.1673
 
 ## Final steps in RTL2GDS
 ### Power Distribution Network generation

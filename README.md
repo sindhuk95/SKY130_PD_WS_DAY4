@@ -17,10 +17,10 @@ As we are trying to implement our own stdcell, there are few guidelines to be fo
 
 This information is defined in ``tracks.info``. The syntax is `` metal layer direction offset spacing``
 
-``li1 X 0.23 0.46
+**li1 X 0.23 0.46** 
 
-  li1 Y 0.17 0.34
-`` 
+ **li1 Y 0.17 0.34**
+ 
   
 ![4-1](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/0b1a5578-e3a4-41b4-b8c5-6ce8c4414228)
 
@@ -73,7 +73,7 @@ port use ground
 
 ```
 
-# CUSTOM CELL NAMING
+# Custom cell naming and lef extraction.
 
 Name the custom cell through tkcon window as ``sky130_vsdinv.mag``.
 
@@ -128,11 +128,9 @@ set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
 add_lefs -src $lefs
 run_synthesis
 ```
-After synthesis , my slack is Zero
+After synthesis , my timing is clean.
 
-
-
-### Delay
+### Delay Tables
 
 Basically, Delay is a parameter that has huge impact on our cells in the design. Delay decides each and every other factor in timing. 
 For a cell with different size, threshold voltages, delay model table is created where we can it as timing table.
@@ -141,6 +139,9 @@ Lets say two scenarios,
 we have long wire and the cell(X1) is sitting at the end of the wire : the delay of this cell will be different because of the bad transition that caused due to the resistance and capcitances on the long wire.
 we have the same cell sitting at the end of the short wire: the delay of this will be different since the tarn is not that bad comapred to the earlier scenario.
 Eventhough both are same cells, depending upon the input tran, the delay got chaned. Same goes with o/p load also.
+
+![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/d6a9ee55-39c4-46b1-a8c8-f4695758621e)
+
 
 Just for better values for slack, I checked few synthesis environment variables like synthesis strategy, synthesis buffering and synthesis sizing , maximum fanout of cells and made changes if neccessary.
 
@@ -165,12 +166,12 @@ Since the custom standard cell has been plugged into the design,in the openlane 
 
 
 
-### Post-synthesis timing analysis
-
+### Post-synthesis timing analysis Using OpenSTA
 Timing analysis is carried out outside the openLANE flow using OpenSTA tool. For this, ```pre_sta.conf``` is required to carry out the STA analysis. Invoke OpenSTA outside the openLANE flow as follows:
 ```
 sta pre_sta.conf
 ```
+Since I have no Violations I skipped this, but have hands on experience on Open STA.
 
 Since clock is propagated only once we do CTS, In placement stage, clock is considered to be ideal. So only setup slack is taken into consideration before CTS.
 

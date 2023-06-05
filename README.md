@@ -17,14 +17,15 @@ As we are trying to implement our own stdcell, there are few guidelines to be fo
 
 This information is defined in ``tracks.info``. The syntax is `` metal layer direction offset spacing``
 
-**li1 X 0.23 0.46** 
-
- **li1 Y 0.17 0.34**
+```
+li1 X 0.23 0.46 
+li1 Y 0.17 0.34
+   ```
  
   
 ![4-1](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/0b1a5578-e3a4-41b4-b8c5-6ce8c4414228)
 
-lets say the I/O ports are in ``li1 layer`` and check whethere they are at intersection or not by using ``grid 0.46um 0.34um 0.23um 0.17um`` on tkcon windowand and to activate the grid, press G on the magic console.
+lets say the I/O ports are in ```li1 layer``` and check whethere they are at intersection or not by using ```grid 0.46um 0.34um 0.23um 0.17um``` on tkcon windowand and to activate the grid, press G on the magic console.
  
 Now, check whether the width and height of std cell met by measuring the tracks the cells has occupied.
  
@@ -75,11 +76,11 @@ port use ground
 
 # Custom cell naming and lef extraction.
 
-Name the custom cell through tkcon window as ``sky130_vsdinv.mag``.
+Name the custom cell through tkcon window as ```sky130_vsdinv.mag```.
 
 ![4-8 our cell](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/68fc0578-dd29-45c5-a6ee-d64cbc02a60b)
 
-this gets created in ``openlane/vsdstdcelldesign`` directory.
+this gets created in ```openlane/vsdstdcelldesign``` directory.
 
 ![4-7 custon name for cell](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/7c2aebaf-5e2a-4e26-800f-b2e04d340e3f)
 
@@ -91,14 +92,14 @@ lef write
 ```
 ![lef write](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/9cc3b2a1-c0c1-4190-a220-fcfd13ad6723)
 
-This generates ``sky130_vsdinv.lef`` file.
+This generates ```sky130_vsdinv.lef``` file.
 
 ![4-9 lef file created](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/fabbb30e-fb9f-4a9a-bb98-c7de461cac54)
 
 ### Integrating custom cell in OpenLANE
 
 In order to include our custom standard cell to ur design and run the first step synthesis, copy the``` sky130_vsdinv.lef``` file to the ``designs/picorv32a/src directory.``
-Since abc maps the standard cell to a library, there must be a library that defines the CMOS inverter. The s```ky130_fd_sc_hd_typical.lib``` as well as fast and slow libs files from ```vsdstdcelldesign/libs``` directory needs to be copied to the ```designs/picorv32a/src``` directory. If you are interested to check our cell in lib and lef, go to lib and lef folders
+Since abc maps the standard cell to a library, there must be a library that defines the CMOS inverter. The ```sky130_fd_sc_hd_typical.lib``` as well as fast and slow libs files from ```vsdstdcelldesign/libs``` directory needs to be copied to the ```designs/picorv32a/src``` directory. If you are interested to check our cell in lib and lef, go to lib and lef folders
 
 ![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/77f8b542-d996-4060-956f-c02283e2f5b0)
 
@@ -134,7 +135,7 @@ After synthesis , my timing is clean.
 
 Basically, Delay is a parameter that has huge impact on our cells in the design. Delay decides each and every other factor in timing. 
 For a cell with different size, threshold voltages, delay model table is created where we can it as timing table.
-``Delay of a cell depends on input transition and out load``. 
+```Delay of a cell depends on input transition and out load```. 
 Lets say two scenarios, 
 we have long wire and the cell(X1) is sitting at the end of the wire : the delay of this cell will be different because of the bad transition that caused due to the resistance and capcitances on the long wire.
 we have the same cell sitting at the end of the short wire: the delay of this will be different since the tarn is not that bad comapred to the earlier scenario.
@@ -159,15 +160,14 @@ SInce we are getting an error shown in the below,
 ![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/9cd41112-43d3-46e7-98f3-5008a7afe8ab)
 
 we gave commands for each stage manually step by step after synthesis.  
-
-`` 
-   init_floorplan
-   place_io
-   global_placement_or
-   tap_decap_or
-   ``
+```
+init_floorplan
+place_io
+global_placement_or
+tap_decap_or
+```
    
-During floorplan, `` tap cells - 7892, Endcap cells - 550 `` got placed. Design has `` 275 original rows ``.
+During floorplan, ``` tap cells - 7892, Endcap cells - 550 ``` got placed. Design has ``` 275 original rows ```.
 
 Now Instead of run_placement, we get 
 ``
@@ -198,13 +198,17 @@ Since I have no Violations I skipped this, but have hands on experience on OpenS
 
 Since clock is propagated only once we do CTS, In placement stage, clock is considered to be ideal. So only setup slack is taken into consideration before CTS.
 
-`` Setup time: minimum time required for the data to be stable before the active edge of the clock to get properly captured.``
+``` 
+Setup time: minimum time required for the data to be stable before the active edge of the clock to get properly captured.
 
-`` setup slack : data required time - data arrival time  ``
+Setup slack : data required time - data arrival time 
 
-clock is generated from PLL which has inbuilt circuit which cells and some logic. There might variations in the clock generation depending upon the ckt. These variations are collectivity known as clock uncertainity. In that jitter is one of the parameter. 
+```
 
-``  Clock Jitter : deviation of clock edge from its original position. ``
+clock is generated from PLL which has inbuilt circuit which cells and some logic. There might variations in the clock generation depending upon the ckt. These variations are collectivity known as clock uncertainity. In that jitter is one of the parameter. It is uncertain that clock might come at that exact time withought any deviation. That is why it is called clock_uncertainity
+Skew, Jitter and Margin comes into clock_uncertainity
+
+```  Clock Jitter : deviation of clock edge from its original position. ```
 
 From the timing report, we can improve slack by upsizing the cells i.e., by replacing the cells with high drive strength and we can see significant changes in the slack.
 
@@ -236,9 +240,28 @@ report_checks -path_delay min_max -format full_clock_expanded -digits 4
 
 After performing Timing analysis, my slack values are
 
-`` Setup : 4.0565 , Hold : -0.1673
+``` Setup : 4.0565 , Hold : -0.1673```.
+
+![buff with more delay](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/396e9062-6818-4740-bbfa-b36efcc158c6)
+
+After CTS, my hold slack is getting violated. In order to fix that, I checked the cell that has more delay from the report from the above picture and changed it to the cell that has more drive strength.
+we exit from openROAD and give these commands
+
+![buff list change](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/a91c21d5-f800-448d-8be9-39f5d0bb050b)
+
+```
+echo $::env(CTS_CLK_BUFFER_LIST)
+set $::env(CTS_CLK_BUFFER_LIST) [lreplace $::env(CTS_CLK_BUFFER_LIST) 0 0]
+echo $::env(CTS_CLK_BUFFER_LIST)
+```
+After changing the files, load the placement stage def file and run cts again. 
+Now, again run OpenROAD and create another db and everything else is same.
+Report after post_cts is
+
+``` Setup slack - 4.2379 , Hold slack - 0.1169 ```
 
 ## Final steps in RTL2GDS
+
 ### Power Distribution Network generation
 Unlike the general ASIC flow, Power Distribution Network generation is not a part of floorplan run in OpenLANE. PDN must be generated after CTS and post-CTS STA analyses:
 
@@ -265,14 +288,14 @@ The two types of engines that perform two types of routing are
 - Fast Route generates the routing guides, whereas Triton Route uses the Global Route and then completes the routing with some strategies and optimisations for finding the best possible path connect the pins. 
 
 Features of TritonRoute:
-1. Performs Initial detail route
-2. Honouring pre-processed route guides
+- Performs Initial detail route
+- Honouring pre-processed route guides
    - Initial route guide
    - splitting
    - merging
    - bridging
-3. Assumes route guide for each net satisfy inter guide connectivity
-4. Works on MILP based panel routing scheme with Intra-layer parallel and inter-layer sequential routing framework
+- Assumes route guide for each net satisfy inter guide connectivity
+- Works on MILP based panel routing scheme with Intra-layer parallel and inter-layer sequential routing framework
 
 This routing stage must have the ``CURRENT_DEF`` set to ``pdn.def``
 
@@ -282,11 +305,21 @@ Start routing by using
 
 - The options for routing can be set in the `config.tcl` file. 
 - The optimisations in routing can also be done by specifying the routing strategy to use different version of `TritonRoute Engine`. There is a trade0ff between the optimised route and the runtime for routing.
-- For the default setting picorv32a takes approximately 30 minutesaccording to the current version of TritonRoute.
+- For the default setting picorv32a takes approximately 30 minutes according to the current version of TritonRoute.
+
+![drc clean](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/c418c0c3-bea0-401c-92e6-d46eeb3041bf)
+
+To see the final layout with PDN and routing use magic engine.
+
+``` magic -T /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.lef def read picorv32a.routing.def & ```
+
+![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/6feefd73-f6fa-4911-9ab4-4df4e5d75fb7).
 
 Parasitic extraction is done separately using spef extractor oustide the openlane.
 Invoke the engine using the command in SPEF_EXTRACTOR directory:
 ``python3 main.py /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/03-06_15-23/tmp/merged.lef /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/03-06_15-23/results/routing/picorv32a.def/``
+
+One thing is observed is TritonRoute automatically generates spef file once it finishes its run. If we create a spef manually, this will replace the auto generated spef file.
 
 
 

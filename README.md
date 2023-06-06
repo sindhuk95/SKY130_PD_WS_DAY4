@@ -5,7 +5,7 @@
 ### Standard Cell LEF generation
 
 During Placement, entire mag information is not necessary. Only the PR boundary, I/O ports, Power and ground rails of the cell is required. This information is defined in LEF file.
-The main objective is extract lef from the mag file and plug into our design flow.
+The main objective is to extract lef from the mag file and plug into our design flow.
 
 ### Grid into Track info
 
@@ -34,7 +34,7 @@ Now, check whether the width and height of std cell met by measuring the tracks 
 
 ### Create Port Definition: 
 
-However, certain properties and definitions need to be set to the pins of the cell. For LEF files, a cell that contains ports is written as a macro cell, and the ports are the declared as PINs of the macro. Our objective is to extract LEF from a mag file. 
+However, certain properties and definitions need to be set to the pins of the cell. For LEF files, a cell that contains ports is written as a macro cell, and the ports are the declared as PINs of the macro.
 
 The way to define a port is through Magic console and following are the steps:
 - In Magic Layout window, first source the .mag file for the design (here inverter). Then Edit >> Text which opens up a dialogue box.
@@ -129,7 +129,7 @@ set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
 add_lefs -src $lefs
 run_synthesis
 ```
-After synthesis , my timing is clean.
+After synthesis, my timing is clean.
 
 ### Delay Tables
 
@@ -194,7 +194,7 @@ Timing analysis is carried out outside the openLANE flow using OpenSTA tool. For
 ```
 sta pre_sta.conf
 ```
-Since I have no Violations I skipped this, but have hands on experience on OpenSTA.
+Since I have no Violations I skipped this, but have hands on experience on timing analysis using OpenSTA.
 
 Since clock is propagated only once we do CTS, In placement stage, clock is considered to be ideal. So only setup slack is taken into consideration before CTS.
 

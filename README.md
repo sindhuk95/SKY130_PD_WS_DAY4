@@ -262,7 +262,39 @@ Report after post_cts is
 
 ## Final steps in RTL2GDS
 
-### Power Distribution Network generation
+## Maze Routing and Lee's algorithm
+
+Routing is a physical connection between two pins. Algorithm takes the pins as source and target and finds the best possible connection between them and guarantees to find a route between two points if the connection exists.
+One such alogirthm is ```The Maze Routing algorithm``` and the ```Lee algorithm``` is one possible solution for Maze routing problems. 
+
+Earlier we have created a grid during customising the cell. In the same way floorplan creates a grid that is used for routing. Lee algorithm  creates two points, source and target and using routing grid it searches for the shortest/best path between two them.
+
+It creates labels to the adjacent grids around the source from 1 till it reaches the target(lets say 7 for ex). There will be so many paths from 1 to 7 like L shaped, zigzag shaped. Lee alogirthm prefers the best path with not zig zags i.e., L shaped. In case there are no L shaped paths, it has to take the zig zag path. This is used for global routing.
+
+They are limitations to it. First it creates maze and then starts numbering from source moves to target. It is easy to to route from two pins, but it is timing consuming for millions of the pins. There are other alogorithm in the same manner. 
+
+![lee route](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/57abf172-7ec2-4725-929b-eb48268c5d1f)
+
+## Design Rule Check (DRC)
+
+DRC verifies whether a design meets the predefined process technology rules given by the foundry for its manufacturing. DRC checking is an essential part of the physical design flow and ensures the design meets manufacturing requirements and will not result in a chip failure.
+It defines the ``Quality of chip``. They are so many DRCs, let us see few of then
+
+Design rules for physical wires
+
+- Minimum width of the wire
+- Minimum spacing between the wires
+- Minimum pitch of the wire
+
+To solve signal short violation, we take the metal layer and put it on to upper metal layer. we check via rules
+
+- Via width
+- via spacing
+
+![drc](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/72016ae6-ef19-407a-8385-5f4883b45806)
+
+## Power Distribution Network generation
+
 Unlike the general ASIC flow, Power Distribution Network generation is not a part of floorplan run in OpenLANE. PDN must be generated after CTS and post-CTS STA analyses:
 
 ```
@@ -280,24 +312,54 @@ we can check whether PDN has been created or no by check the current def environ
 
 ![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/5d1cf948-7ba7-4f17-a8e8-5ceebf0a13d1)
 
-# Routing
+## Routing
 
-The two types of engines that perform two types of routing are
- - Global routing - routing is divided into grids and 3D routing graph used during this by ``FASTE ROUTE``. 
- - Detailed routing - Finer grids and routing guides used to implement physical wiring ``tritonRoute`` 
-- Fast Route generates the routing guides, whereas Triton Route uses the Global Route and then completes the routing with some strategies and optimisations for finding the best possible path connect the pins. 
+Basically in any of the routing EDA tools both OpenLANE and Commerical EDA tools, the entire routing process is very complex because of huge space. They divided the routing into two stages, Global routing and detailed routing.
+The two types of engines that perform two stages of routing are
+ - **Global routing** - routing region is divided into rectangular grid cells and represented as coarse 3D routing graph. The engine that does global routing is ``FASTE ROUTE``. 
+ - **Detailed routing** - Finer grids and routing guides used to implement physical wiring ``tritonRoute`` 
+Fast Route generates the routing guides, whereas Triton Route uses the Global Route and then completes the routing with some strategies and optimisations for finding the best possible path connect the pins. 
 
 Features of TritonRoute:
 - Performs Initial detail route
-- Honouring pre-processed route guides
-   - Initial route guide
-   - splitting
-   - merging
-   - bridging
-- Assumes route guide for each net satisfy inter guide connectivity
-- Works on MILP based panel routing scheme with Intra-layer parallel and inter-layer sequential routing framework
+- Honouring **pre-processed route guides** - attempts to route within the route guides
+   - Initial route guide - see the directions of the prefered route guides. If any non direction routing guides are found it divides it into unit widths.
+   - Splitting - It splits non direction routing guides into unit widths
+   - Merging - guides that are orthogonal(touching guides) to to the prefered guides are merged.
+   - Bridging - gudies that are parallel to the perfered routing guides are bridged with an additional layer
+   - preprocessed guides
 
-This routing stage must have the ``CURRENT_DEF`` set to ``pdn.def``
+![i will know too](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/9de7b0aa-dd3c-42de-a199-2b3ff474f0d6)
+
+- Assumes route guide for each net satisfy **inter guide connectivity**
+   - Same metal layer with touching guides or neighbouring metal layers with nonzero vertically overlapped area( via are placed ).
+   - each unconnected termial i.e., pin of a standard cell instance should have its pin shape overlapped by a routing guide( a black dot(pin) with purple box(metal1 layer))
+  
+
+![i will know this too](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/5c9d2474-08d4-4d1a-a5fe-c678b92c6211)  ![i will know](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/b3d7a8b4-b7a3-4cae-b841-b4408dc9e39f)
+
+- Works on MILP(Mixed Integer linear programming) based **panel routing** scheme with **Intra-layer** parallel and **Inter-layer sequential** routing framework
+
+![inter and intra](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/e21dc4df-d2f4-4939-b711-6b9750e46174)
+
+
+## TritonRoute
+
+``` 
+Inputs : LEF, DEF, Preprocessed route guides
+Output : Detailed routing solution with optimized wire length and via count
+Constraints : Route guide honoring, connectivity constraints and design rules.
+```
+The space where the detailed route  takes place has been defined. Now TritonRoute handles the connectivity in two ways.
+
+- **Access Point(AP)**          : An on-grid point on the metal of the route guide, and is used to connect to lower-layer segments, pins or IO ports,upper-layer segments.
+- **Access Point Cluster(APC)** : A union of all the Aps derived from same lower-layer segment, a pin or an IO port, upper-layer guide.
+
+![ap apc](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/f1719cb7-468a-48f5-aabb-d340847a9685)
+
+TritonRoute run for routing
+
+Make sure the ``CURRENT_DEF`` is set to ``pdn.def``
 
 Start routing by using 
 
@@ -321,7 +383,8 @@ Invoke the engine using the command in SPEF_EXTRACTOR directory:
 
 One thing is observed is TritonRoute automatically generates spef file once it finishes its run. If we create a spef manually, this will replace the auto generated spef file.
 
-
+Drc clean, Timing clean. My design RTL2GDS is![lee route](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/5ab91314-9ebb-4c2b-baab-433ee41b10a2)
+ sucessful
 
 
 

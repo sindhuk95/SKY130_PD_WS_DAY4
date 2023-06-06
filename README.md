@@ -337,7 +337,7 @@ Features of TritonRoute:
    - each unconnected termial i.e., pin of a standard cell instance should have its pin shape overlapped by a routing guide( a black dot(pin) with purple box(metal1 layer))
   
 
-![i will know this too](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/5c9d2474-08d4-4d1a-a5fe-c678b92c6211)  ![i will know](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/b3d7a8b4-b7a3-4cae-b841-b4408dc9e39f)
+![i will know this too](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/5c9d2474-08d4-4d1a-a5fe-c678b92c6211)    ![i will know](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/b3d7a8b4-b7a3-4cae-b841-b4408dc9e39f)
 
 - Works on MILP(Mixed Integer linear programming) based **panel routing** scheme with **Intra-layer** parallel and **Inter-layer sequential** routing framework
 
@@ -384,8 +384,7 @@ Invoke the engine using the command in SPEF_EXTRACTOR directory:
 
 One thing is observed is TritonRoute automatically generates spef file once it finishes its run. If we create a spef manually, this will replace the auto generated spef file.
 
-Drc clean, Timing clean. My design RTL2GDS is![lee route](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/5ab91314-9ebb-4c2b-baab-433ee41b10a2)
- sucessful
+Drc clean, Timing clean. My design RTL2GDS is successful.
 
 
 

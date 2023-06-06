@@ -4,18 +4,18 @@
 
 ### Standard Cell LEF generation
 
-During Placement, entire mag information is not necessary. Only the PR boundary, I/O ports, Power and ground rails of the cell is required. This information is is defined in LEF file.
+During Placement, entire mag information is not necessary. Only the PR boundary, I/O ports, Power and ground rails of the cell is required. This information is defined in LEF file.
 The main objective is extract lef from the mag file and plug into our design flow.
 
-Before moving any further lets know about tracks. 
-### Track 
- A line or path on which metal layers are drawn for routing. Track is used to define the height of the standard cell. 
+### Grid into Track info
 
-As we are trying to implement our own stdcell, there are few guidelines to be followed 
+ **Track** :A path or a line on which metal layers are drawn for routing. Track is used to define the height of the standard cell. 
+
+To implement our own stdcell, few guidelines must be followed 
  - I/O ports must lie on the intersection on Horizontal and vertical tracks
  - Width and Height of standard cell are odd mutliples of Horizontal track pitch and Vertical track pitch
 
-This information is defined in ``tracks.info``. The syntax is `` metal layer direction offset spacing``
+This information is defined in ``tracks.info``. The syntax is ``` metal_layer direction offset spacing ```
 
 ```
 li1 X 0.23 0.46 
@@ -25,7 +25,7 @@ li1 Y 0.17 0.34
   
 ![4-1](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/0b1a5578-e3a4-41b4-b8c5-6ce8c4414228)
 
-lets say the I/O ports are in ```li1 layer``` and check whethere they are at intersection or not by using ```grid 0.46um 0.34um 0.23um 0.17um``` on tkcon windowand and to activate the grid, press G on the magic console.
+lets say the I/O ports are in ```li1 layer``` and check whether they are at intersection or not by using ```grid 0.46um 0.34um 0.23um 0.17um``` on tkcon window and to activate the grid, press G on the magic console.
  
 Now, check whether the width and height of std cell met by measuring the tracks the cells has occupied.
  

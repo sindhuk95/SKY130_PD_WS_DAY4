@@ -310,7 +310,8 @@ we can check whether PDN has been created or no by check the current def environ
   -  The standard cells are designed such that it's height is multiples of the vertical tracks /track pitch. Here, the pitch is `2.72`. Only if the above conditions are adhered it is possible to power the standard cells.
   -  There are definitions for the straps and the rails. In this design, straps are at metal layer 4 and 5 and the standard cell rails are at the metal layer 1. Vias connect accross the layers as required.
 
-![image](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/5d1cf948-7ba7-4f17-a8e8-5ceebf0a13d1)
+![pdn](https://github.com/sindhuk95/SKY130_PD_WS_DAY4/assets/135046169/8f3bc2b5-6655-470a-a43d-7e5378a55e61)
+
 
 ## Routing
 
